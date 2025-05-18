@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+      background-color: #f5f5f5;
+    }
+    h2 {
+      color: #333;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .summary {
+      background: #fff;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .total {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .button {
+      margin-top: 20px;
+      padding: 12px;
+      background: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .button:hover {
+      background: #0056b3;
+    }
+    .payments {
+      margin-top: 30px;
+    }
+    .pay-btn {
+      margin-top: 10px;
+      display: block;
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      background: #222;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .pay-btn.now {
+      background: #4caf50;
+    }
+    .pay-btn.blik {
+      background: #e91e63;
+    }
+    .pay-btn.alt {
+      background: #3f51b5;
+    }
+    .pay-btn:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Checkout Page</h2>
+
+  <div>
+    <label>Product Name</label>
+    <input type="text" placeholder="Enter product name..." id="productName">
+
+    <label>Product Description</label>
+    <textarea placeholder="Enter product details..." id="productDesc"></textarea>
+
+    <label>Customer Name</label>
+    <input type="text" placeholder="Full name">
+
+    <label>Shipping Address</label>
+    <input type="text" placeholder="Street address">
+
+    <label>Postal Code</label>
+    <input type="text" placeholder="Postal code">
+
+    <label>Phone Number</label>
+    <input type="tel" placeholder="Phone number">
+
+    <label>Discount Code</label>
+    <input type="text" id="discountCode" placeholder="Enter code (optional)" oninput="updateTotal()">
+  </div>
+
+  <div class="summary">
+    <p>Product Price: $<span id="productPrice">20.00</span></p>
+    <p>Shipping: $<span id="shippingCost">3.00</span></p>
+    <p class="total">Total: $<span id="totalPrice">23.00</span></p>
+  </div>
+
+  <div class="payments">
+    <h3>Choose a Payment Method</h3>
+
+    <!-- NOWPayments: Crypto -->
+    <button class="pay-btn now" onclick="window.location.href='https://nowpayments.io/payment/?iid=your_nowpayments_invoice_id'">
+      🪙 Pay with Crypto (200+ Coins)
+    </button>
+
+    <!-- Jeton: BLIK (Poland) -->
+    <button class="pay-btn blik" onclick="window.location.href='https://jeton.com/payment-link-for-blik-example'">
+      🇵🇱 Pay with BLIK (Popular in Poland)
+    </button>
+
+    <!-- PayOp: Apple Pay, Google Pay, SEPA -->
+    <button class="pay-btn alt" onclick="window.location.href='https://payop.com/en/payment/cl/example-link'">
+      📱 Pay with Apple Pay / Google Pay / SEPA
+    </button>
+  </div>
+
+  <script>
+    const productPrice = 20.00;
+    const originalShipping = 3.00;
+
+    function updateTotal() {
+      let discountCode = document.getElementById("discountCode").value.trim();
+      let shipping = originalShipping;
+
+      if (discountCode.toUpperCase() === "MYSHIPPING") {
+        shipping = 0.00;
+      }
+
+      let total = productPrice + shipping;
+
+      document.getElementById("shippingCost").innerText = shipping.toFixed(2);
+      document.getElementById("totalPrice").innerText = total.toFixed(2);
+    }
+  </script>
+
+</body>
+</html>
