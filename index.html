@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Checkout Page</title>
+  <meta charset="UTF-8" />
+  <title>Checkout Page - NOWPayments</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -19,7 +19,7 @@
       display: block;
       margin-top: 15px;
     }
-    input, select {
+    input {
       width: 100%;
       padding: 8px;
       margin-top: 5px;
@@ -37,44 +37,40 @@
       font-size: 16px;
       cursor: pointer;
       border-radius: 5px;
+      background-color: #4caf50;
     }
-    .crypto { background-color: #4caf50; }
-    .blik { background-color: #2196f3; }
-    .sepa { background-color: #ff9800; }
   </style>
 </head>
 <body>
 
   <h2>Product Checkout</h2>
 
-  <p><strong>Product:</strong> [Add your product name here]</p>
+  <p><strong>Product:</strong> Awesome Product</p>
   <p><strong>Price:</strong> $50.00</p>
 
   <form id="checkoutForm">
     <label>Full Name
-      <input type="text" required>
+      <input type="text" id="name" required />
     </label>
     <label>Address
-      <input type="text" required>
+      <input type="text" id="address" required />
     </label>
     <label>Postal Code
-      <input type="text" required>
+      <input type="text" id="postalCode" required />
     </label>
     <label>Phone Number
-      <input type="text" required>
+      <input type="text" id="phone" required />
     </label>
 
     <label>Discount Code
-      <input type="text" id="discountCode" placeholder="Enter code">
+      <input type="text" id="discountCode" placeholder="Enter code" />
     </label>
 
     <div class="price-box">
       Shipping: $<span id="shippingCost">3</span>
     </div>
 
-    <button type="button" class="btn crypto" onclick="payCrypto()">Pay with Crypto</button>
-    <button type="button" class="btn blik" onclick="payBlik()">Pay with BLIK</button>
-    <button type="button" class="btn sepa" onclick="paySepa()">Pay with SEPA / Apple Pay / Google Pay</button>
+    <button type="button" class="btn" onclick="payNowPayments()">Pay with Card or Crypto</button>
   </form>
 
   <script>
@@ -90,18 +86,59 @@
       }
     });
 
-    function payCrypto() {
-      window.location.href = "https://nowpayments.io/payment/?iid=YOUR_NOWPAYMENTS_ID";
-    }
+    async function payNowPayments() {
+      const name = document.getElementById("name").value.trim();
+      const address = document.getElementById("address").value.trim();
+      const postalCode = document.getElementById("postalCode").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const discountCode = document.getElementById("discountCode").value.trim().toUpperCase();
+      const shippingCost = parseFloat(shippingCostSpan.textContent);
+      const productPrice = 50; // Fixed product price
+      const totalAmount = productPrice + shippingCost;
 
-    function payBlik() {
-      window.location.href = "https://jeton.com"; // Replace with your Jeton payment link or redirect
-    }
+      if (!name || !address || !postalCode || !phone) {
+        alert("Please fill in all required fields.");
+        return;
+      }
 
-    function paySepa() {
-      window.location.href = "https://payop.com"; // Replace with your PayOp payment link or redirect
+      const orderId = Math.random().toString(36).substring(2, 10);
+
+      const data = {
+        price_amount: totalAmount,
+        price_currency: "usd",
+        pay_currency: "usd",  // Accept card or crypto (USD)
+        order_id: orderId,
+        order_description: `Awesome Product for ${name}`,
+        customer_email: "", // You can add email field if needed
+        success_url: "https://yourstore.com/success", // Change to your success URL
+        cancel_url: "https://yourstore.com/cancel",   // Change to your cancel URL
+        // You can add more customer info here as meta fields if needed
+      };
+
+      try {
+        const response = await fetch("https://api.nowpayments.io/v1/invoice", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": "HDYTMWE-Z5SMWXD-J0PK6E1-38VQ6QN"
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (result.invoice_url) {
+          window.location.href = result.invoice_url;
+        } else {
+          alert("Failed to initiate payment. Please try again.");
+          console.error(result);
+        }
+      } catch (error) {
+        alert("Error contacting NOWPayments API.");
+        console.error(error);
+      }
     }
   </script>
-
 </body>
 </html>
+
